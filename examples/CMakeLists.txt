@@ -73,6 +73,17 @@ endif()
 add_executable(gl_basic gl_basic.c)
 target_link_libraries(gl_basic ${waffle_libname} ${GETOPT_LIBRARIES})
 
+if(waffle_on_switch)
+    # Use the C++ linker to link the libraries, as mesa depends on libstdc++
+    set_target_properties(gl_basic PROPERTIES LINKER_LANGUAGE CXX)
+    target_link_libraries(gl_basic
+            EGL
+            glapi
+            GLESv2
+            drm_nouveau
+    )
+endif()
+
 if(waffle_on_mac)
     set_target_properties(gl_basic
         PROPERTIES

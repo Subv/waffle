@@ -47,7 +47,11 @@ static tss_t wcore_tinfo_key;
 ///
 /// [2] Ulrich Drepper. "Elf Handling For Thread Local Storage".
 ///     http://people.redhat.com/drepper/tls.pdf
-static __thread struct wcore_tinfo wcore_tinfo
+static 
+#ifdef __SWITCH__
+thread_local
+#endif
+struct wcore_tinfo wcore_tinfo
 #ifdef WAFFLE_HAS_TLS_MODEL_INITIAL_EXEC
     __attribute__((tls_model("initial-exec")))
 #endif
@@ -86,11 +90,13 @@ wcore_tinfo_key_dtor(void *args)
 static void
 wcore_tinfo_key_create(void)
 {
+#ifndef __SWITCH__
     int err;
 
     err = tss_create(&wcore_tinfo_key, wcore_tinfo_key_dtor);
     if (err)
         wcore_tinfo_abort_init();
+#endif
 }
 
 static void
@@ -123,9 +129,11 @@ wcore_tinfo_init(struct wcore_tinfo *tinfo)
     call_once(&wcore_tinfo_once, wcore_tinfo_key_create);
 #endif
 
+#ifndef __SWITCH__
     err = tss_set(wcore_tinfo_key, tinfo);
     if (err)
         wcore_tinfo_abort_init();
+#endif
 }
 
 struct wcore_tinfo*

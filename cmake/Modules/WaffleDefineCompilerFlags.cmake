@@ -37,7 +37,7 @@ if (NOT MSVC)
     #
     # compiler flags
     #
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --std=c99")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --std=c11")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
     set(CMAKE_C_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 
@@ -143,4 +143,11 @@ endif()
 
 if(waffle_on_windows)
     add_definitions(-DWAFFLE_HAS_WGL)
+endif()
+
+if(waffle_on_switch)
+    if(waffle_has_tls)
+        add_definitions(-DWAFFLE_HAS_TLS)
+    endif()
+    add_definitions(-DWAFFLE_HAS_SWITCH_LIBNX_EGL)
 endif()

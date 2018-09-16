@@ -17,6 +17,7 @@ include_directories(
     linux
     nacl
     surfaceless_egl
+    switch_egl
     wayland
     wgl
     x11
@@ -196,6 +197,20 @@ if(waffle_has_nacl)
         )
     list(APPEND waffle_cxx_sources
         nacl/nacl_container.cpp
+        )
+endif()
+
+if(waffle_on_switch)
+    list(APPEND waffle_sources
+        switch_egl/swegl_display.c
+        switch_egl/swegl_platform.c
+        switch_egl/swegl_window.c
+    )
+    list(APPEND waffle_libdeps
+        EGL
+        glapi
+        GLESv2
+        drm_nouveau
         )
 endif()
 

@@ -85,3 +85,8 @@ endif()
 if(waffle_on_windows)
     find_path(GLEXT_INCLUDE_DIR NAMES GL/wglext.h DOC "Include for GL/wglext.h")
 endif()
+
+if(waffle_on_switch)
+    # waffle_has_egl
+    waffle_pkg_config(egl egl)
+endif()

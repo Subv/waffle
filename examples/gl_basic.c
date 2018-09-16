@@ -615,6 +615,12 @@ main(int argc, char **argv)
         opts.dl = WAFFLE_DL_OPENGL_ES2;
         opts.context_profile = WAFFLE_NONE;
         opts.context_version = -1;
+    #elif defined(__SWITCH__)
+        opts.context_api = WAFFLE_CONTEXT_OPENGL;
+        opts.platform = WAFFLE_PLATFORM_SWITCH_LIBNX_EGL;
+        opts.dl = WAFFLE_DL_OPENGL;
+        opts.context_profile = WAFFLE_CONTEXT_CORE_PROFILE;
+        opts.context_version = 32;
     #else
     ok = parse_args(argc, argv, &opts);
     if (!ok)

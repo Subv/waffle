@@ -25,7 +25,11 @@
 
 #define _POSIX_C_SOURCE 200112 // glib feature macro for unsetenv()
 
+#ifndef __SWITCH__
 #include <dlfcn.h>
+#else
+#include <EGL/egl.h>
+#endif
 
 #include "wcore_error.h"
 #include "wegl_platform.h"
@@ -75,6 +79,7 @@ wegl_platform_teardown(struct wegl_platform *self)
         unsetenv("EGL_PLATFORM");
     }
 
+#ifndef __SWITCH__
     if (self->eglHandle) {
         error = dlclose(self->eglHandle);
         if (error) {
@@ -84,6 +89,7 @@ wegl_platform_teardown(struct wegl_platform *self)
                          libEGL_filename, dlerror());
         }
     }
+#endif
 
     ok &= wcore_platform_teardown(&self->wcore);
     return ok;
@@ -103,6 +109,7 @@ wegl_platform_init(struct wegl_platform *self, EGLenum egl_platform)
     // Most Waffle platforms will call eglCreateWindowSurface.
     self->egl_surface_type_mask = EGL_WINDOW_BIT;
 
+#ifndef __SWITCH__
     self->eglHandle = dlopen(libEGL_filename, RTLD_LAZY | RTLD_LOCAL);
     if (!self->eglHandle) {
         wcore_errorf(WAFFLE_ERROR_FATAL,
@@ -121,7 +128,10 @@ wegl_platform_init(struct wegl_platform *self, EGLenum egl_platform)
         ok = false;                                                    \
         goto error;                                                    \
     }
-
+#else
+#define RETRIEVE_EGL_SYMBOL(function) \
+    self->function = &function;
+#endif
     // Use eglGetProcAddress to get EGL 1.5 symbols, not dlsym, because the
     // EGL 1.5 spec requires that implementors support eglGetProcAddress for
     // all symbols.

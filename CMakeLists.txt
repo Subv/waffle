@@ -105,11 +105,13 @@ include_directories(
     src
     )
 
-add_subdirectory(third_party/threads)
-include_directories(
-    third_party/threads
-    )
-set(THREADS_LIBRARIES threads_bundled)
+if(NOT waffle_on_switch)
+    add_subdirectory(third_party/threads)
+    include_directories(
+        third_party/threads
+        )
+    set(THREADS_LIBRARIES threads_bundled)
+endif()
 
 if(MSVC)
     add_subdirectory(third_party/getopt)
